@@ -67,4 +67,18 @@ export class Validation {
         next()
     }
 
+    updateTodo(req: Request, res: Response, next: NextFunction) {
+        req.checkBody("completed").isBoolean().withMessage("should be boolean");
+
+        const errors = req.validationErrors();
+
+        if (errors) {
+            return res.json({
+                success: false,
+                errors
+            });
+        }
+        next();
+    }
+
 }

@@ -40,16 +40,45 @@ export class TodoController {
         }
     }
 
-    // updateTodo = async (req: Request, res: Response) => {
-    //     try {
-    //         if (req.user) {
-    //             const { _id: author} = req.user;
-    //             const { _id } = req.params;
+    updateTodo = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        try {
+            if (req.user) {
+                const { id: author} = req.user;
+                const { completed } = req.body;
+                const date = new Date().toISOString();
+                const todo = await Todo.findOneAndUpdate({ author, _id: id }, { $set: { completedAt: date, completed }}, { new: true });
+                if (!todo) throw `invalid id ${id}`;
 
+                res.json({
+                    success: true,
+                    todo
+                });
+            }
+        } catch (e) {
+            if (e === `invalid id ${id}`) {
+                res.status(400).json({
+                    success: false,
+                    error: e
+                });
+            } else {
+                res.status(400).json({
+                    success: false
+                });
+            }
+        }
+    }
 
-    //         }
-    //     } catch (e) {
+    deleteTodo = async (req: Request, res: Response) => {
+        const { id } = req.params;
 
-    //     }
-    // }
+        try {
+            if (req.user) {
+                const { _id: author } = req.user;
+                const todo = await Todo.findOneAndRemove({ author, _id: id});
+            }
+        } catch (e) {
+
+        }
+    }
 }

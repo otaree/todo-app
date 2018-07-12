@@ -49,7 +49,10 @@ class App {
         this.app.post("/login", this.validator.login, this.authController.login(passport));
         this.app.get("/todos", passport.authenticate("jwt", { session: false}), this.todoController.getAllTodos);
         this.app.post("/todo", passport.authenticate("jwt", { session: false}), this.validator.createTodo, this.todoController.createNewTodo);
-        // this.app.route("/todo/:id").get().put().delete();
+        this.app.route("/todo/:id")
+            .get()
+            .put(passport.authenticate("jwt", { session: false }), this.todoController.updateTodo, this.todoController.updateTodo)
+            .delete();
     }
 }
 

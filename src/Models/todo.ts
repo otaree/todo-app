@@ -6,6 +6,7 @@ interface ITodo {
     createdAt: Date;
     author: Schema.Types.ObjectId;
     completedAt?: Date;
+    completed: boolean;
 }
 
 interface ITodoModel extends ITodo, Document {}
@@ -33,6 +34,10 @@ const TodoSchema: Schema = new Schema({
     },
     completedAt: {
         type: Date
+    },
+    completed: {
+        type: Boolean,
+        default: false
     }
 });
 
