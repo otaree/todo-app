@@ -8,7 +8,7 @@ export class TodoController {
         try {
             if (req.user) {
                 const { _id } = req.user;
-                const todos = await Todo.find({ author: _id });
+                const todos = await Todo.find({ author: _id }).select("completed author title description createdAt completedAt");
                 res.json({
                     success: true,
                     todos
@@ -18,6 +18,33 @@ export class TodoController {
             }
         } catch (e) {
             res.status(400).json();
+        }
+    }
+
+    getTodo = async (req: Request, res: Response) => {
+        const { id } = req.params;
+        try {
+            if (req.user) {
+                const { _id: author } = req.user;
+                const todo = await Todo.findOne({ _id: id, author }).select("completed author title description createdAt completedAt");
+                if (!todo) {
+                    throw `invalid id ${id}`;
+                }
+
+                res.json({
+                    success: true,
+                    todo
+                });
+            }
+        } catch (e) {
+            if (e === `invalid id ${id}`) {
+                res.status(400).json({
+                    success: false,
+                    error: e
+                });
+            } else {
+                res.status(400).json();
+            }
         }
     }
 
@@ -47,7 +74,7 @@ export class TodoController {
                 const { id: author} = req.user;
                 const { completed } = req.body;
                 const date = new Date().toISOString();
-                const todo = await Todo.findOneAndUpdate({ author, _id: id }, { $set: { completedAt: date, completed }}, { new: true });
+                const todo = await Todo.findOneAndUpdate({ author, _id: id }, { $set: { completedAt: date, completed }}, { new: true }).select("completed author title description createdAt completedAt");
                 if (!todo) throw `invalid id ${id}`;
 
                 res.json({
@@ -75,10 +102,25 @@ export class TodoController {
         try {
             if (req.user) {
                 const { _id: author } = req.user;
-                const todo = await Todo.findOneAndRemove({ author, _id: id});
+                const todo = await Todo.findOneAndRemove({ author, _id: id}).select("completed author title description createdAt completedAt");
+                if (!todo) {
+                    throw `invalid id ${id}`;
+                }
+
+                res.json({
+                    success: true,
+                    todo
+                });
             }
         } catch (e) {
-
+            if (e === `invalid id ${id}`) {
+                res.status(400).json({
+                    success: false,
+                    error: e
+                });
+            } else {
+                res.status(400).json();
+            }
         }
     }
 }
