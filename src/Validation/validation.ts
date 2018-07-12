@@ -48,4 +48,23 @@ export class Validation {
         next();
     }
 
+    createTodo(req: Request, res: Response, next: NextFunction) {
+        req.checkBody("title").trim().notEmpty().withMessage("Should not be empty").isLength({ min: 4 }).withMessage("Should at least be 4 character long");
+        req.checkBody("description").trim().notEmpty().withMessage("Should not be empty").isLength({ min: 4 }).withMessage("Should at least be 4 character long");
+
+        req.sanitizeBody("title").trim();
+        req.sanitizeBody("description").trim();
+
+        const errors = req.validationErrors();
+
+        if (errors) {
+            return res.json({
+                success: false,
+                errors
+            });
+        }
+
+        next()
+    }
+
 }
