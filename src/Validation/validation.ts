@@ -29,9 +29,9 @@ export class Validation {
     signup(req: Request, res: Response, next: NextFunction) {
         req.checkBody("username", "should be at least 4 character long").trim().isLength({ min: 4 });
         req.checkBody("email", "invalid email").trim().isEmail();
-        req.checkBody("password", "Should be at least 6 character long").trim().isLength({
+        req.checkBody("password").trim().isLength({
             min: 6
-        }).equals(req.body.confirmPassword);
+        }).withMessage("Should be at least 6 character long").equals(req.body.confirmPassword).withMessage("passwords dose not match");
         req.sanitizeBody("email").trim();
         req.sanitizeBody("password").trim();
         req.sanitizeBody("username").trim();
@@ -39,7 +39,7 @@ export class Validation {
         const errors = req.validationErrors();
 
         if (errors) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 errors
             });
@@ -58,7 +58,7 @@ export class Validation {
         const errors = req.validationErrors();
 
         if (errors) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 errors
             });
@@ -73,7 +73,7 @@ export class Validation {
         const errors = req.validationErrors();
 
         if (errors) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
                 errors
             });

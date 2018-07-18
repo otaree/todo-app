@@ -41,7 +41,15 @@ class App {
     }
 
     private connectDb(): void {
-        mongoose.connect(process.env.MONGODB_URI || "",  { useNewUrlParser: true });
+        if (process.env.NODE_ENV === "test") {
+            if (process.env.MONGODB_URI_TEST) {
+                mongoose.connect(process.env.MONGODB_URI_TEST,  { useNewUrlParser: true });
+            }
+        } else {
+            if (process.env.MONGODB_URI) {
+                mongoose.connect(process.env.MONGODB_URI,  { useNewUrlParser: true });
+            }
+        }
     }
 
     private setupRoutes(): void {

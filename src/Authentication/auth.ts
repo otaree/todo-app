@@ -9,14 +9,19 @@ export class Auth {
 
         try {
             const { username, email, password } = req.body;
+            const user = await User.findOne({ email });
+            if (user) {
+                throw "email already registered"
+            }
             const newUser = new User({ username, email, password });
             await newUser.save();
             res.json({
                 success: true,
-                message: "create new user"
+                message: "created new user"
             });
         } catch (e) {
             res.status(400).json({
+                success: false,
                 error: e
             });
         }

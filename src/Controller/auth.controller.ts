@@ -17,7 +17,11 @@ export class AuthController {
                     });
                 }
 
-                const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || "", { expiresIn: "7d"});
+                let token = null;
+                if (process.env.JWT_SECRET) {
+                    token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d"});
+                }
+
                 const { email, username } = user;
                 res.json({
                     token: token,

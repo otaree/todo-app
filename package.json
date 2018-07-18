@@ -8,7 +8,7 @@
     "dev": "ts-node ./src/server.ts",
     "start": "node ./dist/server.js",
     "prod": "npm run build && npm run start",
-    "test": "npm run build && mocha ./dist/test/*.test.js"
+    "test": "npm run build && export NODE_ENV=test && mocha ./dist/test/*.test.js"
   },
   "author": "otaree",
   "license": "ISC",
